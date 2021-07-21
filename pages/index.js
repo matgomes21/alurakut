@@ -24,7 +24,7 @@ function ProfileSideBar(props) {
 }
 
 export default function Home() {
-  const [communities, setCommunities] = React.useState(['Odeio segunda-feira']);
+  const [communities, setCommunities] = React.useState([{title: 'Odeio segunda-feira', image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'}]);
 
   const githubUser = 'matgomes21';
   const favoritePeople = [
@@ -55,7 +55,14 @@ export default function Home() {
             <h2>O que você deseja fazer?</h2>
             <form onSubmit={function handleCreateCommunity(e) {
               e.preventDefault();
-              setCommunities([...communities, 'Odeio segunda-feira']);
+              const formData = new FormData(e.target);
+
+              const community = {
+                title: formData.get('title'),
+                image: formData.get('image'),
+              };
+
+              setCommunities([...communities, community]);
             }}>
               <div>
                 <input
@@ -83,11 +90,11 @@ export default function Home() {
         <div className="profileRelationsArea" style={{gridArea: 'profileRelationsArea'}}>
           <ProfileRelationsBoxWrapper>
             <ul>
-              {communities.map((person)=>(
+              {communities.map((community)=>(
                 <li>
-                  <a href={`/users/${person}`} key={person}>
-                    <img src="https://placehold.it/300x300" alt={`${person} Profile`} />
-                    <span>{person}</span>
+                  <a href={`/users/${community.title}`} key={community.title}>
+                    <img src={community.image} alt={`${community.title} Profile`} />
+                    <span>{community.title}</span>
                   </a>
                 </li>
                 ))}
