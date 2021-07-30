@@ -89,11 +89,14 @@ export default function Home() {
         </div>
         <div className="profileRelationsArea" style={{gridArea: 'profileRelationsArea'}}>
           <ProfileRelationsBoxWrapper>
+            <h2 className="smallTitle">
+              Comunidades ({communities.length})
+            </h2>
             <ul>
               {communities.map((community)=>(
                 <li>
                   <a href={`/users/${community.title}`} key={community.title}>
-                    <img src={community.image} alt={`${community.title} Profile`} />
+                    <img src={community.image} alt={`${community.title} Community`} />
                     <span>{community.title}</span>
                   </a>
                 </li>
@@ -116,9 +119,6 @@ export default function Home() {
                 ))}
             </ul>
           </ProfileRelationsBoxWrapper>
-          <Box>
-            Comunidades
-          </Box>
         </div>
       </MainGrid>
     </>
