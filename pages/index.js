@@ -24,7 +24,7 @@ function ProfileSideBar(props) {
 }
 
 export default function Home() {
-  const [communities, setCommunities] = React.useState([{title: 'Odeio segunda-feira', image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'}]);
+  const [communities, setCommunities] = React.useState([{id: 1, title: 'Odeio segunda-feira', image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'}]);
 
   const githubUser = 'matgomes21';
   const favoritePeople = [
