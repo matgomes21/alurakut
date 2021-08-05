@@ -4,8 +4,11 @@ import Box from '../src/components/Box';
 import ProfileRelationsBoxWrapper from '../src/components/ProfileRelations';
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
 
+const READ_TOKEN = process.env.NEXT_PUBLIC_API_READ_ONLY_TOKEN;
+
 function ProfileSideBar(props) {
   const {githubUser} = props;
+
   return (
     <Box>
       <img src={`https://github.com/${githubUser}.png`} alt="User Profile" style={{ borderRadius: '8px'}} />
@@ -25,6 +28,9 @@ function ProfileSideBar(props) {
 
 export default function Home() {
   const [communities, setCommunities] = React.useState([{id: 1, title: 'Odeio segunda-feira', image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'}]);
+  const [followers, setFollowers] = useState([]);
+
+  console.log(followers);
 
   const githubUser = 'matgomes21';
   const favoritePeople = [
@@ -35,12 +41,36 @@ export default function Home() {
     'twistershark'
   ];
 
-  const [followers, setFollowers] = useState([]);
 
   useEffect(() => {
     fetch('https://api.github.com/users/matgomes21/followers').then((data) => data.json()).then((parsedData)=> {
       setFollowers(parsedData);
     });
+
+    // API GraphQL
+    fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Authorization': READ_TOKEN,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        'query': `query {
+          allCommunities {
+            title
+            id
+            imageUrl
+            creatorSlug
+          }
+        }`
+      })
+    })
+    .then((response)=>response.json())
+    .then((parsedResponse)=>{
+      setCommunities(parsedResponse.data.allCommunities);
+    });
+
   },[]);
 
   return (
@@ -65,12 +95,25 @@ export default function Home() {
               e.preventDefault();
               const formData = new FormData(e.target);
 
-              const community = {
+              const communityBody = {
                 title: formData.get('title'),
-                image: formData.get('image'),
+                imageUrl: formData.get('image'),
+                creatorSlug: githubUser,
               };
 
-              setCommunities([...communities, community]);
+              fetch('/api/communities', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(communityBody)
+              })
+              .then(async (response) => {
+                const data = await response.json();
+                const {community} = data;
+                setCommunities([...communities, community]);
+              });
+
             }}>
               <div>
                 <input
@@ -102,9 +145,9 @@ export default function Home() {
             </h2>
             <ul>
               {communities.map((community)=>(
-                <li>
-                  <a href={`/users/${community.title}`} key={community.title}>
-                    <img src={community.image} alt={`${community.title} Community`} />
+                <li key={community.id}>
+                  <a href={`/comunidades/${community.title}`} key={community.title}>
+                    <img src={community.imageUrl} alt={`${community.title} Community`} />
                     <span>{community.title}</span>
                   </a>
                 </li>
