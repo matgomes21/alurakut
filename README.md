@@ -1,6 +1,6 @@
 # Alurakut
 
-Web application inspired on good and old Orkut.
+Web application inspired on good and old Orkut. Made during Imersão Alura.
 
 ## Technologies
 
